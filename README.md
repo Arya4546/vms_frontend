@@ -39,5 +39,5 @@ npm start
 Runs the app on http://localhost:3000.
 
 🔗 Backend
-👉https://github.com/Arya4546/vms_backend
+👉https://github.com/Arya4546/vms-backend
 
