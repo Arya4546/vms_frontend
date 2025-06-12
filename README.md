@@ -41,3 +41,27 @@ Runs the app on http://localhost:3000.
 🔗 Backend
 👉https://github.com/Arya4546/vms-backend
 
+
+## 📸 Screenshots
+
+### 🔐 Login Page
+![Login](./assets/Login.png)
+
+### 🏠 Dashboard
+![Dashboard](./assets/dashboard.png)
+
+### 🛡️ Access Control
+![Access Control](./assets/accesscontrol.png)
+
+### 📊 Analytics
+![Analytics](./assets/analytics.png)
+
+### 👥 Users Management
+![Users](./assets/users.png)
+
+### 🧾 Visitors Management
+![Visitors](./assets/visitors.png)
+
+### ⚙️ Settings
+![Settings](./assets/settings.png)
+
