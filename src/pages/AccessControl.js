@@ -11,7 +11,6 @@ const AccessControl = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // List of pages for the resource dropdown
   const pages = ['dashboard', 'users', 'access-control', 'visitors', 'analytics', 'settings'];
   const roles = ['admin', 'company', 'receptionist'];
   const possibleActions = ['read', 'write'];
@@ -25,7 +24,6 @@ const AccessControl = () => {
 
         const config = { headers: { Authorization: `Bearer ${token}` } };
 
-        // Fetch authenticated user
         const storedUser = JSON.parse(localStorage.getItem('user'));
         let currentUser;
         if (storedUser) {
@@ -36,7 +34,6 @@ const AccessControl = () => {
         }
         setUser(currentUser);
 
-        // Fetch access control rules
         const rulesRes = await axios.get(`${process.env.REACT_APP_API_URL}/access-control`, config);
         setRules(rulesRes.data);
       } catch (err) {
@@ -62,7 +59,7 @@ const AccessControl = () => {
       const ruleData = {
         role: newRule.role,
         resource: newRule.resource,
-        actions: newRule.actions, // Array of actions (e.g., ["read", "write"])
+        actions: newRule.actions,
       };
       const res = await axios.post(`${process.env.REACT_APP_API_URL}/access-control`, ruleData, config);
       setRules([...rules, res.data]);
@@ -78,7 +75,7 @@ const AccessControl = () => {
     setNewRule({
       role: rule.role,
       resource: rule.resource,
-      actions: rule.actions || [rule.action], // Backward compatibility if action is a string
+      actions: rule.actions || [rule.action],
     });
   };
 
@@ -126,120 +123,149 @@ const AccessControl = () => {
   };
 
   if (loading) {
-    return <div className="flex justify-center items-center h-screen">Loading...</div>;
+    return <div className="flex justify-center items-center h-screen text-[#1a2a44] text-lg md:text-xl">Loading...</div>;
   }
 
   if (error) {
-    return <div className="flex justify-center items-center h-screen text-red-500">{error}</div>;
+    return <div className="flex justify-center items-center h-screen text-red-500 text-lg md:text-xl">Error: {error}</div>;
   }
 
   if (!user) {
-    return <div className="flex justify-center items-center h-screen">No user data available</div>;
+    return <div className="flex justify-center items-center h-screen text-[#1a2a44] text-lg md:text-xl">No user data available</div>;
   }
 
   return (
-    <div className="flex min-h-screen bg-gray-100">
+    <div className="flex min-h-screen bg-[#f5f6fa]">
       <Sidebar role={user.role} />
-      <div className="flex-1 flex flex-col lg:ml-64">
+      <div className="flex-1 flex flex-col">
         <Navbar user={user} />
-        <div className="p-4 sm:p-6 flex-1">
-          <h1 className="text-2xl sm:text-3xl font-bold mb-6 text-gray-800">Access Control</h1>
+        <div className="p-4 sm:p-6 md:p-8 flex-1 mt-16 md:ml-64">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-6 md:mb-8 text-[#1a2a44] flex items-center gap-2 md:gap-3">
+            <svg className="w-6 h-6 sm:w-8 sm:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 11c0-1.657-1.343-3-3-3s-3 1.343-3 3m6 0c0-1.657 1.343-3 3-3s3 1.343 3 3m-6 0v4m-3 0v-4m6 0v4" />
+            </svg>
+            Access Control
+          </h1>
 
-          <form onSubmit={editingRule ? handleUpdateRule : handleAddRule} className="mb-6">
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <select
-                value={newRule.role}
-                onChange={(e) => setNewRule({ ...newRule, role: e.target.value })}
-                className="p-2 rounded-lg bg-gray-200 border border-gray-300 focus:ring-2 focus:ring-accent focus:outline-none transition-all duration-200"
-                required
-              >
-                <option value="">Select Role</option>
-                {roles.map((role) => (
-                  <option key={role} value={role}>
-                    {role.charAt(0).toUpperCase() + role.slice(1)}
-                  </option>
-                ))}
-              </select>
-              <select
-                value={newRule.resource}
-                onChange={(e) => setNewRule({ ...newRule, resource: e.target.value })}
-                className="p-2 rounded-lg bg-gray-200 border border-gray-300 focus:ring-2 focus:ring-accent focus:outline-none transition-all duration-200"
-                required
-              >
-                <option value="">Select Resource</option>
-                {pages.map((page) => (
-                  <option key={page} value={page}>
-                    {page.charAt(0).toUpperCase() + page.slice(1).replace('-', ' ')}
-                  </option>
-                ))}
-              </select>
-              <div className="flex items-center gap-4">
-                {possibleActions.map((action) => (
-                  <label key={action} className="flex items-center">
-                    <input
-                      type="checkbox"
-                      checked={newRule.actions.includes(action)}
-                      onChange={() => handleActionChange(action)}
-                      className="mr-2"
-                    />
-                    {action.charAt(0).toUpperCase() + action.slice(1)}
-                  </label>
-                ))}
+          <div className="bg-white p-4 sm:p-6 rounded-xl card-shadow mb-6 md:mb-8">
+            <form onSubmit={editingRule ? handleUpdateRule : handleAddRule}>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="relative">
+                  <select
+                    value={newRule.role}
+                    onChange={(e) => setNewRule({ ...newRule, role: e.target.value })}
+                    className="w-full p-3 sm:p-3 rounded-lg bg-gray-100 border border-gray-300 focus:ring-2 focus:ring-[#4a6fa5] focus:outline-none transition-all duration-200 text-sm sm:text-base"
+                    required
+                  >
+                    <option value="">Select Role</option>
+                    {roles.map((role) => (
+                      <option key={role} value={role}>
+                        {role.charAt(0).toUpperCase() + role.slice(1)}
+                      </option>
+                    ))}
+                  </select>
+                  <svg className="w-4 h-4 sm:w-5 sm:h-5 absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                  </svg>
+                </div>
+                <div className="relative">
+                  <select
+                    value={newRule.resource}
+                    onChange={(e) => setNewRule({ ...newRule, resource: e.target.value })}
+                    className="w-full p-3 sm:p-3 rounded-lg bg-gray-100 border border-gray-300 focus:ring-2 focus:ring-[#4a6fa5] focus:outline-none transition-all duration-200 text-sm sm:text-base"
+                    required
+                  >
+                    <option value="">Select Resource</option>
+                    {pages.map((page) => (
+                      <option key={page} value={page}>
+                        {page.charAt(0).toUpperCase() + page.slice(1).replace('-', ' ')}
+                      </option>
+                    ))}
+                  </select>
+                  <svg className="w-4 h-4 sm:w-5 sm:h-5 absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                  </svg>
+                </div>
+                <div className="flex items-center gap-4">
+                  {possibleActions.map((action) => (
+                    <label key={action} className="flex items-center gap-2">
+                      <input
+                        type="checkbox"
+                        checked={newRule.actions.includes(action)}
+                        onChange={() => handleActionChange(action)}
+                        className="form-checkbox h-5 w-5 text-[#4a6fa5] rounded focus:ring-[#4a6fa5]"
+                      />
+                      <span className="text-[#1a2a44] text-sm sm:text-base">{action.charAt(0).toUpperCase() + action.slice(1)}</span>
+                    </label>
+                  ))}
+                </div>
               </div>
-            </div>
-            <div className="mt-4 flex gap-3">
-              <button
-                type="submit"
-                className="bg-accent text-white py-2 px-4 rounded-lg hover:bg-opacity-90 transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-accent"
-              >
-                {editingRule ? 'Update Rule' : 'Add Rule'}
-              </button>
-              {editingRule && (
+              <div className="mt-4 sm:mt-6 flex flex-col sm:flex-row gap-3">
                 <button
-                  type="button"
-                  onClick={() => {
-                    setEditingRule(null);
-                    setNewRule({ role: '', resource: '', actions: [] });
-                  }}
-                  className="bg-gray-500 text-white py-2 px-4 rounded-lg hover:bg-opacity-90 transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-gray-500"
+                  type="submit"
+                  className="btn-primary flex items-center justify-center gap-2 py-2 sm:py-3 text-sm sm:text-base w-full sm:w-auto"
                 >
-                  Cancel
+                  <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                  </svg>
+                  {editingRule ? 'Update Rule' : 'Add Rule'}
                 </button>
-              )}
-            </div>
-          </form>
+                {editingRule && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setEditingRule(null);
+                      setNewRule({ role: '', resource: '', actions: [] });
+                    }}
+                    className="btn-secondary flex items-center justify-center gap-2 py-2 sm:py-3 text-sm sm:text-base w-full sm:w-auto"
+                  >
+                    <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                    Cancel
+                  </button>
+                )}
+              </div>
+            </form>
+          </div>
 
-          <div className="overflow-x-auto">
-            <table className="w-full bg-white rounded-lg shadow-lg">
+          <div className="overflow-x-auto bg-white rounded-xl card-shadow">
+            <table className="w-full min-w-[600px] text-left">
               <thead>
                 <tr className="bg-gray-100">
-                  <th className="p-4 text-left text-gray-700">Role</th>
-                  <th className="p-4 text-left text-gray-700">Resource</th>
-                  <th className="p-4 text-left text-gray-700">Action</th>
-                  <th className="p-4 text-left text-gray-700">Actions</th>
+                  <th className="p-3 sm:p-4 text-[#1a2a44] font-semibold text-sm sm:text-base">Role</th>
+                  <th className="p-3 sm:p-4 text-[#1a2a44] font-semibold text-sm sm:text-base">Resource</th>
+                  <th className="p-3 sm:p-4 text-[#1a2a44] font-semibold text-sm sm:text-base">Actions</th>
+                  <th className="p-3 sm:p-4 text-[#1a2a44] font-semibold text-sm sm:text-base">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {rules.map((rule) => (
                   <tr key={rule._id} className="border-b hover:bg-gray-50 transition-colors duration-200">
-                    <td className="p-4">{rule.role}</td>
-                    <td className="p-4">{rule.resource}</td>
-                    <td className="p-4">
+                    <td className="p-3 sm:p-4 text-[#1a2a44] text-sm sm:text-base">{rule.role.charAt(0).toUpperCase() + rule.role.slice(1)}</td>
+                    <td className="p-3 sm:p-4 text-[#1a2a44] text-sm sm:text-base">{rule.resource.charAt(0).toUpperCase() + rule.resource.slice(1).replace('-', ' ')}</td>
+                    <td className="p-3 sm:p-4 text-[#1a2a44] text-sm sm:text-base">
                       {Array.isArray(rule.actions)
-                        ? rule.actions.join(', ')
-                        : rule.action || 'N/A'}
+                        ? rule.actions.map(a => a.charAt(0).toUpperCase() + a.slice(1)).join(', ')
+                        : (rule.action ? rule.action.charAt(0).toUpperCase() + rule.action.slice(1) : 'N/A')}
                     </td>
-                    <td className="p-4 flex gap-2">
+                    <td className="p-3 sm:p-4 flex flex-wrap gap-2">
                       <button
                         onClick={() => handleEditRule(rule)}
-                        className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-opacity-90 transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="btn-primary flex items-center justify-center gap-1 sm:gap-2 py-2 sm:py-2 px-2 sm:px-3 text-xs sm:text-sm w-full sm:w-auto"
                       >
+                        <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                        </svg>
                         Edit
                       </button>
                       <button
                         onClick={() => handleDeleteRule(rule._id)}
-                        className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-opacity-90 transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-500"
+                        className="btn-danger flex items-center justify-center gap-1 sm:gap-2 py-2 sm:py-2 px-2 sm:px-3 text-xs sm:text-sm w-full sm:w-auto"
                       >
+                        <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5-4h4M9 7h6m-5 4v6m4-6v6" />
+                        </svg>
                         Delete
                       </button>
                     </td>

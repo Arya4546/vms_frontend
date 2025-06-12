@@ -1,30 +1,18 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import logo from '../assets/logo.png';
 
 const Navbar = ({ user }) => {
-  const navigate = useNavigate();
-
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    navigate('/login');
-  };
-
   return (
-    <div className="flex justify-between items-center p-4 bg-primary text-white shadow-md">
-      <div className="text-xl font-bold flex items-center gap-3">
-        <img src={logo} alt="Webbify Infotech-VMS" className="w-20 h-15 transition-transform duration-300 hover:scale-110" />
-        <span className="hidden sm:block">Webbify Infotech-VMS</span>
-      </div>
-      <div className="flex items-center space-x-4">
-        <span className="text-sm sm:text-base truncate max-w-xs">{user.name}</span>
-        <button
-          onClick={handleLogout}
-          className="bg-accent text-white px-4 py-2 rounded-lg hover:bg-opacity-90 transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-accent focus:ring-opacity-50"
-        >
-          Logout
-        </button>
+    <div className="bg-white shadow-md p-4 sm:p-5 flex justify-between items-center fixed top-0 left-0 right-0 z-50 md:ml-64">
+      <h1 className="text-lg sm:text-xl md:text-2xl font-semibold text-[#1a2a44]">
+        Welcome, {user?.name || 'User'}
+      </h1>
+      <div className="flex items-center gap-2 sm:gap-3">
+        <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-[#d4af37] flex items-center justify-center text-white font-semibold text-sm sm:text-base">
+          {user?.name?.charAt(0).toUpperCase() || 'U'}
+        </div>
+        <span className="text-[#1a2a44] text-sm sm:text-base capitalize hidden sm:block">
+          {user?.role || 'Role'}
+        </span>
       </div>
     </div>
   );

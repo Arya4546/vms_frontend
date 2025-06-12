@@ -8,11 +8,13 @@ import Analytics from './pages/Analytics';
 import Settings from './pages/Settings';
 import AccessControl from './pages/AccessControl';
 
+// PrivateRoute component to protect authenticated routes
 const PrivateRoute = ({ children }) => {
   const token = localStorage.getItem('token');
   return token ? children : <Navigate to="/login" />;
 };
 
+// Main App component
 const App = () => {
   const [token, setToken] = useState(localStorage.getItem('token'));
 
